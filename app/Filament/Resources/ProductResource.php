@@ -38,9 +38,10 @@ class ProductResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('name')->sortable()->searchable(),
-                TextColumn::make('brand'),
-                TextColumn::make('type'),
-                TextColumn::make('quantity'),
+                TextColumn::make('brand')->sortable()->searchable(),
+                TextColumn::make('type')->sortable(),
+                TextColumn::make('category')->sortable()->searchable(),
+                TextColumn::make('store_name')->label('Store')->sortable()->searchable()
             ])
             ->filters([
                 //

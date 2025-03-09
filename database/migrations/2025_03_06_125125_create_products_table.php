@@ -15,9 +15,13 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('brand')->nullable();
+            $table->string('category');
+            $table->string('store_name')->nullable();
             $table->enum('type', ['unit', 'pack']);
-            $table->integer('quantity')->default(1);
-            $table->timestamps();
+            $table->integer('quantity')->nullable()->default(1);
+            $table->string('unit_of_measure')->nullable();
+            $table->decimal('unit_quantity', 8, 2)->nullable();
+            $table->timestamps(); 
         });
     }
 
