@@ -37,9 +37,20 @@ class ProductResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('name')->sortable()->searchable(),
+                TextColumn::make('name')
+                    ->sortable()
+                    ->searchable()
+                    ->formatStateUsing(function ($record) {
+                        $unitQuantity = $record->unit_quantity;
+                        $unitQuantityFormatted = fmod($unitQuantity, 1) == 0 ? (int) $unitQuantity: rtrim(rtrim(number_format($unitQuantity, 2, '.', ''), '0'), '.');
+                        return "<strong> {$record->name} {$unitQuantityFormatted}{$record->unit_of_measure}</strong>";
+                    })->html(),
                 TextColumn::make('brand')->sortable()->searchable(),
-                TextColumn::make('type')->sortable(),
+                TextColumn::make('type')
+                    ->sortable()
+                    ->formatStateUsing(function ($record) {
+                        return $record->type === 'pack' ? "📦 Pack <strong>(x{$record->quantity})</strong>" : "🏷️ Single Unit";
+                    })->html(),
                 TextColumn::make('category')->sortable()->searchable(),
                 TextColumn::make('store_name')->label('Store')->sortable()->searchable()
             ])
