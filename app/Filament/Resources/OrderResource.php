@@ -6,6 +6,9 @@ use App\Filament\Resources\OrderResource\Pages;
 use App\Filament\Resources\OrderResource\RelationManagers;
 use App\Models\Order;
 use Filament\Forms;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -24,7 +27,28 @@ class OrderResource extends Resource
     {
         return $form
             ->schema([
-                
+                TextInput::make('user_id')
+                    ->label('User ID')
+                    ->required()
+                    ->numeric(),
+                DatePicker::make('desired_delivery_date')
+                    ->label('Desired Delivery Date')
+                    ->required(),
+                Select::make('status')
+                    ->label('Status')
+                    ->options([
+                        'pending' => 'Pending',
+                        'completed' => 'Completed',
+                        'cancelled' => 'Cancelled',
+                    ])
+                    ->required(),
+                TextInput::make('address')
+                    ->label('Delivery Address')
+                    ->required(),
+                TextInput::make('fee_per_delivery')
+                    ->label('Delivery Fee')
+                    ->required()
+                    ->numeric(),
             ]);
     }
 
@@ -36,8 +60,6 @@ class OrderResource extends Resource
                         ->sortable()
                         ->searchable()
                         ->formatStateUsing(fn($record) => $record->user->name),
-                        
-    
                     TextColumn::make('desired_delivery_date')
                         ->sortable()
                         ->label('Delivery Date')
@@ -45,13 +67,11 @@ class OrderResource extends Resource
     
                     TextColumn::make('status')
                         ->sortable()
-                        ->formatStateUsing(function ($record) {
-                            return match ($record->status) {
-                                'pending' => 'Pending',
-                                'completed' => 'Completed',
-                                'cancelled' => 'Cancelled',
-                                default => 'Unknown',
-                            };
+                        ->badge()
+                        ->color(fn (string $state): string => match ($state) {
+                            'pending' => 'warning',
+                            'completed' => 'success',
+                            'cancelled' => 'danger',
                         }),
     
                     TextColumn::make('address')
